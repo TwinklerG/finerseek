@@ -1,12 +1,16 @@
 import { historys } from "@/lib/placeholders-data";
 import clsx from "clsx";
-import Link from "next/link";
-import { redirect, useParams } from "next/navigation";
+import { Dispatch, memo, SetStateAction } from "react";
 
-export function Sidebar({ hide }: { hide: boolean }) {
-  const params = useParams<{ id: string }>();
-  const id = Number(params.id);
-
+const PureSieBar = ({
+  hide,
+  id,
+  setId,
+}: {
+  hide: boolean;
+  id: number;
+  setId: Dispatch<SetStateAction<number>>;
+}) => {
   return (
     <div
       className={clsx(
@@ -18,37 +22,36 @@ export function Sidebar({ hide }: { hide: boolean }) {
         <div
           className="bg-gray-600 rounded-md p-4 hover:cursor-pointer"
           onClick={() => {
-            redirect("/app/chatbot");
+            setId(-1);
           }}
         >
           开启新的对话
         </div>
       </div>
       <ul className="overflow-y-scroll">
-        {historys.map((history, index) => (
-          <Link href={`/app/chatbot/${index}`} key={index}>
-            {id === index ? (
-              <li
-                key={index}
-                className=" bg-gray-600 rounded-md hover:cursor-pointer  h-10 p-2 m-2"
-                onClick={() => {
-                  redirect(`/app/chatbot/${index}`);
-                }}
-              ></li>
-            ) : (
-              <li
-                key={index}
-                className=" bg-gray-500 rounded-md hover:cursor-pointer hover:bg-gray-600 h-10 p-2 m-2"
-                onClick={() => {
-                  redirect(`/app/chatbot/${index}`);
-                }}
-              >
-                {history}
-              </li>
-            )}
-          </Link>
-        ))}
+        {historys.map((history, index) =>
+          id === index ? (
+            <li
+              key={index}
+              className=" bg-gray-600 rounded-md hover:cursor-pointer  h-10 p-2 m-2"
+            ></li>
+          ) : (
+            <li
+              key={index}
+              className=" bg-gray-500 rounded-md hover:cursor-pointer hover:bg-gray-600 h-10 p-2 m-2"
+              onClick={() => {
+                setId(index);
+              }}
+            >
+              {history}
+            </li>
+          )
+        )}
       </ul>
     </div>
   );
-}
+};
+
+export const Sidebar = memo(PureSieBar, (prevProps, nextProps) => {
+  return prevProps === nextProps;
+});
