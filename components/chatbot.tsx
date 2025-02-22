@@ -4,7 +4,7 @@ import { Messages } from "@/components/messages";
 import NavigationMenuDemo from "@/components/navigation-menu";
 import { Sidebar } from "@/components/sidebar";
 import { ArrowLeftIcon, ArrowRightIcon } from "@radix-ui/react-icons";
-import { useState } from "react";
+import { Suspense, useState } from "react";
 
 export function Chatbot() {
   const [hideSidebar, setHideSidebar] = useState(false);
@@ -24,7 +24,9 @@ export function Chatbot() {
           </div>
 
           <NavigationMenuDemo />
-          <Messages />
+          <Suspense fallback={<></>}>
+            <Messages />
+          </Suspense>
         </div>
       </div>
     </div>

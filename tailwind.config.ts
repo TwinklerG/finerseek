@@ -1,5 +1,6 @@
 import type { Config } from "tailwindcss";
 import { blackA, mauve, violet, indigo, purple } from "@radix-ui/colors";
+import typography from "@tailwindcss/typography";
 
 export default {
   content: [
@@ -64,5 +65,5 @@ export default {
       },
     },
   },
-  plugins: [],
+  plugins: [typography],
 } satisfies Config;
