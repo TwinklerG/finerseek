@@ -44,8 +44,17 @@ export function Messages({ id }: { id: number }) {
               message.role === "user" ? "justify-end" : "justify-start"
             )}
           >
-            <div className={clsx("flex", message.role === "user" && "flex-row-reverse")}>
-              <div>{message.role === "user"? "user": "fs"}</div>
+            <div
+              className={clsx(
+                "flex",
+                message.role === "user" && "flex-row-reverse"
+              )}
+            >
+              <div className="pt-2 ml-1">
+                <div className="bg-gray-200 rounded-md">
+                  {message.role === "user" ? "user" : "fs"}
+                </div>
+              </div>
               <article className="p-2 m-2 bg-gray-200 rounded prose-sm shadow-lg">
                 <Markdown skipHtml={false} rehypePlugins={[rehypeRaw]}>
                   {message.content}

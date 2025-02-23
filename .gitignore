@@ -48,3 +48,6 @@ __pycache__/
 
 # tmp
 tmp.*
+
+# Webstorm
+.idea/
