@@ -1,3 +1,3 @@
 export interface Messages {
-  messages: { role: string; message: string }[];
+  messages: { role: string; content: string }[];
 }

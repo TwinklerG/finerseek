@@ -45,3 +45,6 @@ next-env.d.ts
 
 # fastapi
 __pycache__/
+
+# tmp
+tmp.*

@@ -30,13 +30,13 @@ export const historys = [
 ];
 
 export const chats = [
-  { role: "user", message: "# 你好世界" },
-  { role: "assistant", message: "## Hello World" },
-  { role: "user", message: "# 你是谁" },
-  { role: "assistant", message: "服务器繁忙，请稍候重试" },
+  { role: "user", content: "# 你是谁" },
+  { role: "assistant", content: "服务器繁忙，请稍候重试" },
   {
     role: "user",
-    message: "```c++\nint mian(){\nreturn 0;\n}\n```",
+    content: "```c++\nint mian(){\nreturn 0;\n}\n```",
   },
-  { role: "assistant", message: "服务器繁忙，请稍候重试" },
+  { role: "assistant", content: "服务器繁忙，请稍候重试" },
+  { role: "user", content: "你是谁" },
+  { role: "assistant", content: "<blockquote>正在思考</blockquote>服务器繁忙，请稍候重试" },
 ];
