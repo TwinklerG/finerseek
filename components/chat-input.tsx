@@ -57,21 +57,26 @@ export function ChatInput({
   return (
     <>
       <textarea
-        className="w-full h-[70%] focus-visible:outline-none focus-visible:ring-2"
+        className="bg-slate-100 dark:bg-gray-800 rounded-md p-1 w-full h-[70%] focus-visible:outline-none focus-visible:ring-2"
         value={inputContent}
         onChange={(event) => {
           setInputContent(event.target.value);
         }}
         onKeyDown={(event) => {
-          console.log(inputContent);
-          if (event.key === "Enter" && event.shiftKey === false) {
+          // console.log(inputContent);
+          if (
+            inputContent.length !== 0 &&
+            event.key === "Enter" &&
+            event.shiftKey === false
+          ) {
             handleSubmit();
+            event.preventDefault();
           }
         }}
       ></textarea>
       <div className="flex items-center justify-end ">
         <button
-          className="bg-slate-300 hover:bg-slate-500 p-1 m-1 rounded-full transition-all"
+          className="bg-blue-200 hover:bg-blue-300 dark:bg-blue-700 dark:hover:bg-blue-800 transition-all p-1 m-1 rounded-full"
           onClick={handleSubmit}
         >
           <ArrowUpIcon />

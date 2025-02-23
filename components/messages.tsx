@@ -20,10 +20,10 @@ export function Messages({ id }: { id: number }) {
   }, [id]);
 
   return (
-    <div className="w-full h-[90%] p-5">
+    <div className="w-full h-[90%] p-5 bg-slate-200 dark:bg-gray-800">
       <div
         ref={messagesContainerRef}
-        className="shadow-md w-full h-[70%] rounded-lg border-2 flex flex-col animate-scaleIn overflow-y-scroll overflow-x-hidden"
+        className="shadow-md w-full h-[70%] rounded-lg border-2 border-blue-400 flex flex-col animate-scaleIn overflow-y-scroll overflow-x-hidden"
       >
         <div
           className={clsx(
@@ -31,11 +31,7 @@ export function Messages({ id }: { id: number }) {
             messages.length === 0 &&
               "flex items-center justify-center h-full w-full text-3xl"
           )}
-        >
-          {messages.length === 0
-            ? "Welcome to finerseek!"
-            : `You are in history record ${id}`}
-        </div>
+        ></div>
         {messages.map((message, index) => (
           <div
             key={index}
@@ -51,11 +47,11 @@ export function Messages({ id }: { id: number }) {
               )}
             >
               <div className="pt-2 ml-1">
-                <div className="bg-gray-200 rounded-md">
+                <div className="rounded-md dark:bg-gray-600">
                   {message.role === "user" ? "user" : "fs"}
                 </div>
               </div>
-              <article className="p-2 m-2 bg-gray-200 rounded prose-sm shadow-lg">
+              <article className="p-2 m-2 rounded prose-sm shadow-lg dark:bg-gray-700">
                 <Markdown skipHtml={false} rehypePlugins={[rehypeRaw]}>
                   {message.content}
                 </Markdown>

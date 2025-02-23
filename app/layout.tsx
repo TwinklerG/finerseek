@@ -1,15 +1,15 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
+import { LXGW_WenKai_TC, LXGW_WenKai_Mono_TC } from "next/font/google";
 import "./globals.css";
 
-const geistSans = Geist({
-  variable: "--font-geist-sans",
-  subsets: ["latin"],
+const lxgwWenKai = LXGW_WenKai_TC({
+  weight: ["400"],
+  subsets: ["latin-ext"]
 });
 
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
-  subsets: ["latin"],
+const lxgwWenKaiMono = LXGW_WenKai_Mono_TC({
+  weight: ["400"],
+  subsets: ["latin-ext"]
 });
 
 export const metadata: Metadata = {
@@ -25,7 +25,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
+        className={`${lxgwWenKai.className} ${lxgwWenKaiMono.className} antialiased`}
       >
         {children}
       </body>
