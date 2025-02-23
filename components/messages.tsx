@@ -23,13 +23,13 @@ export function Messages({ id }: { id: number }) {
     <div className="w-full h-[90%] p-5">
       <div
         ref={messagesContainerRef}
-        className="w-full h-[70%] rounded-lg border-2 flex flex-col animate-scaleIn overflow-y-scroll overflow-x-hidden"
+        className="shadow-md w-full h-[70%] rounded-lg border-2 flex flex-col animate-scaleIn overflow-y-scroll overflow-x-hidden"
       >
         <div
           className={clsx(
-            "text-2xl",
+            "",
             messages.length === 0 &&
-              "flex items-center justify-center h-full w-full"
+              "flex items-center justify-center h-full w-full text-3xl"
           )}
         >
           {messages.length === 0
@@ -40,21 +40,24 @@ export function Messages({ id }: { id: number }) {
           <div
             key={index}
             className={clsx(
-              "flex flex-row gap-2",
+              "flex flex-row gap-2 ",
               message.role === "user" ? "justify-end" : "justify-start"
             )}
           >
-            <article className="p-2 m-2 bg-gray-200 rounded prose-sm">
-              <Markdown skipHtml={false} rehypePlugins={[rehypeRaw]}>
-                {message.content}
-              </Markdown>
-            </article>
+            <div className={clsx("flex", message.role === "user" && "flex-row-reverse")}>
+              <div>{message.role === "user"? "user": "fs"}</div>
+              <article className="p-2 m-2 bg-gray-200 rounded prose-sm shadow-lg">
+                <Markdown skipHtml={false} rehypePlugins={[rehypeRaw]}>
+                  {message.content}
+                </Markdown>
+              </article>
+            </div>
           </div>
         ))}
 
         <div ref={messagesEndRef} className=""></div>
       </div>
-      <div className="relative w-full h-[30%] flex items-center justify-center p-2 overflow-scroll">
+      <div className="relative w-full h-[30%] p-2 overflow-hidden">
         <div className="rounded-lg border-2 w-full h-full">
           <ChatInput messages={messages} setMessages={setMessages} />
         </div>

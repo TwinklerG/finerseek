@@ -57,21 +57,23 @@ export function ChatInput({
   return (
     <>
       <input
-        className="w-full h-[80%]"
+        className="w-full h-[70%] text-center"
         value={inputContent}
         onChange={(event) => {
           setInputContent(event.target.value);
         }}
         onKeyDown={(event) => {
+          console.log(inputContent);
           if (event.key === "Enter") {
-            handleSubmit();
+            if (event.shiftKey === false) {
+              handleSubmit();
+            }
           }
         }}
       ></input>
       <div className="flex items-center justify-end ">
-        <input type="file" />
         <button
-          className="hover:bg-slate-500 p-1 rounded-full"
+          className="bg-slate-300 hover:bg-slate-500 p-1 m-1 rounded-full transition-all"
           onClick={handleSubmit}
         >
           <ArrowUpIcon />

@@ -22,7 +22,7 @@ def stream_chat_completions(payload: dict):
             try:
                 data = json.loads(line)
                 delta = data["choices"][0]["delta"]
-                print(delta)
+                # print(delta)
                 if delta["reasoning_content"] != None:
                     # print(delta["reasoning_content"], end="")
                     yield delta["reasoning_content"]
