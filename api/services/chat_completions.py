@@ -36,6 +36,7 @@ def stream_chat_completions(payload: dict):
             except Exception:
                 pass
             import time
+
             time.sleep(0)
     else:
-        return "API error"
+        yield "API error"
