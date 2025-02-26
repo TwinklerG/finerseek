@@ -7,7 +7,7 @@ import useScrollToBottom from "./hooks/use-scroll-to-bottom";
 import { chats } from "@/lib/placeholders-data";
 import Markdown from "react-markdown";
 import rehypeRaw from "rehype-raw";
-
+import './style.css';
 export function Messages({ id }: { id: number }) {
   const [messages, setMessages] = useState<{ role: string; content: string }[]>(
     []
@@ -20,10 +20,10 @@ export function Messages({ id }: { id: number }) {
   }, [id]);
 
   return (
-    <div className="w-full h-[90%] p-5 bg-white dark:bg-black">
+    <div className="w-full h-[90%] p-5 bg-white dark:bg-custom-gray">
       <div
         ref={messagesContainerRef}
-        className="shadow-md w-full h-[70%] rounded-lg border-2 border-grey-400 dark:border-gray-600 flex flex-col animate-scaleIn overflow-y-scroll overflow-x-hidden"
+        className="shadow-md w-full h-[70%] rounded-lg border-2 border-grey-400 dark:border-gray-600 flex flex-col animate-scaleIn overflow-auto overflow-x-hidden"
       >
         <div
           className={clsx(

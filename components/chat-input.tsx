@@ -1,6 +1,6 @@
 import { ArrowUpIcon } from "@radix-ui/react-icons";
 import { Dispatch, SetStateAction, useState } from "react";
-
+import './style.css';
 export function ChatInput({
   messages,
   setMessages,
@@ -58,7 +58,7 @@ export function ChatInput({
     <>
     <div className="overflow-auto max-h-full">
       <textarea
-  className="bg-white dark:bg-black rounded-md p-1 w-full h-[70%] focus-visible:outline-none focus-visible:ring-2 border border-gray-300 dark:border-gray-800 focus-visible:border-blue-100"
+  className="bg-white dark:bg-custom-gray rounded-md p-1 w-full h-[70%] focus-visible:outline-none focus-visible:ring-2 border border-gray-300 dark:border-gray-800 focus-visible:border-blue-100"
   value={inputContent}
   onChange={(event) => {
     setInputContent(event.target.value);

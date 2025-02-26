@@ -1,0 +1,32 @@
+.overflow-y-scroll {
+    scrollbar-width: fat; /* 滚动条的宽度 */
+    scrollbar-color: #b9b8b8 #e4e8ef; /* 滚动条颜色和轨道颜色 */
+}
+.overflow-auto {
+    scrollbar-width: fat; /* 设置滚动条为细 */
+    scrollbar-color: #b9b9b9 #ffffff; /* 设置滑块和轨道的颜色 */}
+
+@media (prefers-color-scheme: dark) {
+.overflow-y-scroll {
+    scrollbar-width: fat; /* 滚动条的宽度 */
+    scrollbar-color: #181818 #222936; /* 滚动条颜色和轨道颜色 */
+}
+.overflow-auto {
+    scrollbar-width: fat; /* 设置滚动条为细 */
+    scrollbar-color: #6f6e6e #181818; /* 设置滑块和轨道的颜色 */
+}
+}
+
+.sidebar-hidden {
+    width: 80px; 
+    transition: width 0.3s; 
+    background-color: #e4e8ef; 
+  }
+  @media (prefers-color-scheme: dark) {
+    .sidebar-hidden {
+        width: 80px; 
+        transition: width 0.3s;
+        background-color: #222936;
+      }
+  }
+  

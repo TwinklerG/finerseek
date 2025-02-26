@@ -26,12 +26,12 @@ export default function Page() {
         />
         <div
           className={clsx(
-            "bg-white dark:bg-black h-full relative flex flex-col w-full"
+            "bg-white dark:bg-custom-gray h-full relative flex flex-col w-full"
           )}
         >
           <div className="flex h-[10%]">
             <div
-              className="bg-slate-300 hover:bg-slate-400 dark:bg-gray-900 dark:hover:bg-gray-950 hover:cursor-pointer my-4 mx-5 p-2 transition-all flex items-center justify-center rounded-full"
+              className="bg-slate-300 hover:bg-slate-400 dark:bg-gray-800 dark:hover:bg-gray-950 hover:cursor-pointer my-4 mx-5 p-2 transition-all flex items-center justify-center rounded-full"
               onClick={() => {
                 setHideSidebar(!hideSidebar);
               }}
