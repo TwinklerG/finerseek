@@ -13,6 +13,7 @@ export default {
       colors: {
         background: "var(--background)",
         foreground: "var(--foreground)",
+        'custom-gray': '#181818',
         ...blackA,
         ...mauve,
         ...violet,
