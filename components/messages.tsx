@@ -20,10 +20,10 @@ export function Messages({ id }: { id: number }) {
   }, [id]);
 
   return (
-    <div className="w-full h-[90%] p-5 bg-slate-200 dark:bg-gray-800">
+    <div className="w-full h-[90%] p-5 bg-white dark:bg-black">
       <div
         ref={messagesContainerRef}
-        className="shadow-md w-full h-[70%] rounded-lg border-2 border-blue-400 flex flex-col animate-scaleIn overflow-y-scroll overflow-x-hidden"
+        className="shadow-md w-full h-[70%] rounded-lg border-2 border-grey-400 dark:border-gray-600 flex flex-col animate-scaleIn overflow-y-scroll overflow-x-hidden"
       >
         <div
           className={clsx(
@@ -62,8 +62,8 @@ export function Messages({ id }: { id: number }) {
 
         <div ref={messagesEndRef} className=""></div>
       </div>
-      <div className="relative w-full h-[30%] p-2 overflow-hidden">
-        <div className="rounded-lg border-2 w-full h-full">
+      <div className="shadow-md w-full h-[30%] p-1 rounded-lg border-2 border-grey-400 dark:border-gray-600 flex flex-col animate-scaleIn">
+        <div className="rounded-lg border-1 w-full h-full">
           <ChatInput messages={messages} setMessages={setMessages} />
         </div>
       </div>

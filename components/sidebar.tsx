@@ -19,7 +19,7 @@ const PureSieBar = ({
   return (
     <div
       className={clsx(
-        "bg-slate-200 dark:bg-gray-800 max-h-full transition-all duration-300 flex flex-col",
+        "bg-slate-200 dark:bg-gray-700 max-h-full transition-all duration-300 flex flex-col",
         hide
           ? " w-0"
           : windowSize.width < 768
@@ -27,6 +27,10 @@ const PureSieBar = ({
           : "w-[20%]"
       )}
     >
+    
+      <div style={{ fontSize: '2em', paddingLeft: '20px' }}>FinerSeek</div>
+      <div style={{ fontSize: '0.5em', paddingLeft: '20px' }}>Build your better AI financial assistant.</div>
+    
       <div className="w-full p-4">
         <div
           className="bg-blue-200 hover:bg-blue-300 dark:bg-blue-700 dark:hover:bg-blue-800 shadow-lg hover:shadow-xl transition-all hover:translate-x-0.5 hover:translate-y-0.5 rounded-md p-4 hover:cursor-pointer text-center "

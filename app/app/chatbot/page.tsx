@@ -14,7 +14,7 @@ export default function Page() {
 
   return (
     <div className="h-screen w-screen flex flex-col">
-      <div className="bg-blue-200 dark:bg-blue-600 h-[4vh] text-center">
+      <div className="bg-blue-200 dark:bg-blue-900 h-[4vh] text-center">
         实时资讯
       </div>
       <div className={clsx("h-[96vh] w-full flex relative")}>
@@ -26,7 +26,7 @@ export default function Page() {
         />
         <div
           className={clsx(
-            "bg-slate-200 dark:bg-gray-800 h-full relative flex flex-col w-full"
+            "bg-white dark:bg-black h-full relative flex flex-col w-full"
           )}
         >
           <div className="flex h-[10%]">
