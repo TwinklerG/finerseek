@@ -51,3 +51,6 @@ tmp.*
 
 # Webstorm
 .idea/
+
+# uploaded files
+uploads/

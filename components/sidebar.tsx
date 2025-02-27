@@ -2,7 +2,7 @@ import { historys } from "@/lib/placeholders-data";
 import clsx from "clsx";
 import { Dispatch, memo, SetStateAction } from "react";
 import { useWindowSize } from "./hooks/use-window-size";
-import './style.css';
+import "./style.css";
 
 const PureSieBar = ({
   hide,
@@ -31,30 +31,53 @@ const PureSieBar = ({
       {hide ? (
         // 当 hide 为 true 时显示的内容
         <div className="flex items-center justify-center h-full">
-          
           <div
-              className="bg-blue-200 hover:bg-blue-300 dark:bg-blue-700 dark:hover:bg-blue-800 shadow-lg hover:shadow-xl transition-all hover:translate-x-0.5 hover:translate-y-0.5 rounded-md p-4 hover:cursor-pointer text-center"
-              onClick={() => {
-                setId(-1);
-                if (windowSize.width < 768) {
-                  setHide(true);
-                }
-              }}
+            className="bg-blue-200 hover:bg-blue-300 dark:bg-blue-700 dark:hover:bg-blue-800 shadow-lg hover:shadow-xl transition-all hover:translate-x-0.5 hover:translate-y-0.5 rounded-md p-4 hover:cursor-pointer text-center"
+            onClick={() => {
+              setId(-1);
+              if (windowSize.width < 768) {
+                setHide(true);
+              }
+            }}
+          >
+            <svg
+              width="15"
+              height="15"
+              viewBox="0 0 15 15"
+              fill="none"
+              xmlns="http://www.w3.org/2000/svg"
             >
- 
-    <svg width="15" height="15" viewBox="0 0 15 15" fill="none" xmlns="http://www.w3.org/2000/svg">
-  {/* 加号的水平线 */}
-  <line x1="3" y1="7.5" x2="12" y2="7.5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
-  {/* 加号的垂直线 */}
-  <line x1="7.5" y1="3" x2="7.5" y2="12" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
-</svg></div>
+              {/* 加号的水平线 */}
+              <line
+                x1="3"
+                y1="7.5"
+                x2="12"
+                y2="7.5"
+                stroke="currentColor"
+                strokeWidth="1.5"
+                strokeLinecap="round"
+              />
+              {/* 加号的垂直线 */}
+              <line
+                x1="7.5"
+                y1="3"
+                x2="7.5"
+                y2="12"
+                stroke="currentColor"
+                strokeWidth="1.5"
+                strokeLinecap="round"
+              />
+            </svg>
+          </div>
         </div>
       ) : (
         // 当 hide 为 false 时显示的完整内容
         <>
-          <div style={{ fontSize: '2em', paddingLeft: '20px' }}>FinerSeek</div>
-          <div style={{ fontSize: '0.5em', paddingLeft: '20px' }}>Build your better AI financial assistant.</div>
-        
+          <div style={{ fontSize: "2em", paddingLeft: "20px" }}>FinerSeek</div>
+          <div style={{ fontSize: "0.5em", paddingLeft: "20px" }}>
+            Build your better AI financial assistant.
+          </div>
+
           <div className="w-full p-4">
             <div
               className="bg-blue-200 hover:bg-blue-300 dark:bg-blue-700 dark:hover:bg-blue-800 shadow-lg hover:shadow-xl transition-all hover:translate-x-0.5 hover:translate-y-0.5 rounded-md p-4 hover:cursor-pointer text-center"
