@@ -74,7 +74,7 @@ const PureSieBar = ({
         // 当 hide 为 false 时显示的完整内容
         <>
           <div style={{ fontSize: "2em", paddingLeft: "20px" }}>FinerSeek</div>
-          <div style={{ fontSize: "0.5em", paddingLeft: "20px" }}>
+          <div style={{ fontSize: "0.9em", paddingLeft: "20px" }}>
             Build your better AI financial assistant.
           </div>
 

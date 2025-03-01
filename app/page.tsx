@@ -10,6 +10,10 @@ export default function Home() {
         前往前端chatbot部分
         <code className="font-mono font-bold">app/app/chatbot</code>
       </Link>
+      <Link href="/app/artifacts">
+        前往前端artifacts部分
+        <code className="font-mono font-bold">app/app/artifacts</code>
+      </Link>
     </div>
   );
 }
