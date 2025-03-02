@@ -1,10 +1,16 @@
 import type { Metadata } from "next";
-import { Source_Sans_3, Comforter } from "next/font/google";
+import {LXGW_WenKai_TC,LXGW_WenKai_Mono_TC} from "next/font/google";
 import "./globals.css";
 
-const Hei = Source_Sans_3({
+
+const lxgwWenKai = LXGW_WenKai_TC({
   weight: ["400"],
-  subsets: ["latin"]
+  subsets: ["latin-ext"]
+});
+
+const lxgwWenKaiMono = LXGW_WenKai_Mono_TC({
+  weight: ["400"],
+  subsets: ["latin-ext"]
 });
 export const metadata: Metadata = {
   title: "Finerseek",
@@ -19,7 +25,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body
-        className={`${Hei.className} antialiased`}
+        className={`${lxgwWenKai.className} ${lxgwWenKaiMono.className}antialiased`}
       >
         {children}
       </body>

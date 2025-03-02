@@ -8,6 +8,11 @@ import { chats } from "@/lib/placeholders-data";
 import Markdown from "react-markdown";
 import rehypeRaw from "rehype-raw";
 import './style.css';
+import { Source_Sans_3} from "next/font/google";
+const Hei = Source_Sans_3({
+  weight: ["400"],
+  subsets: ["latin"]
+});
 export function Messages({ id }: { id: number }) {
   const [messages, setMessages] = useState<{ role: string; content: string }[]>(
     []
@@ -51,7 +56,7 @@ export function Messages({ id }: { id: number }) {
                   {message.role === "user" ? "user" : "fs"}
                 </div>
               </div>
-              <article className="p-2 m-2 rounded prose-sm shadow-lg dark:bg-gray-700">
+              <article className={`p-2 m-2 rounded prose-sm shadow-lg dark:bg-gray-700 ${Hei.className}`}>
                 <Markdown skipHtml={false} rehypePlugins={[rehypeRaw]}>
                   {message.content}
                 </Markdown>

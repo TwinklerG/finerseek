@@ -2,6 +2,11 @@ import { ArrowUpIcon } from "@radix-ui/react-icons";
 import { Dispatch, SetStateAction, useState } from "react";
 import "./style.css";
 import { Artifacts } from "./artifacts";
+import { Source_Sans_3} from "next/font/google";
+const Hei = Source_Sans_3({
+  weight: ["400"],
+  subsets: ["latin"]
+});
 export function ChatInput({
   messages,
   setMessages,
