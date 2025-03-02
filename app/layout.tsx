@@ -1,17 +1,11 @@
 import type { Metadata } from "next";
-import { LXGW_WenKai_TC, LXGW_WenKai_Mono_TC } from "next/font/google";
+import { Source_Sans_3, Comforter } from "next/font/google";
 import "./globals.css";
 
-const lxgwWenKai = LXGW_WenKai_TC({
+const Hei = Source_Sans_3({
   weight: ["400"],
-  subsets: ["latin-ext"]
+  subsets: ["latin"]
 });
-
-const lxgwWenKaiMono = LXGW_WenKai_Mono_TC({
-  weight: ["400"],
-  subsets: ["latin-ext"]
-});
-
 export const metadata: Metadata = {
   title: "Finerseek",
   description: "Finerseek",
@@ -25,7 +19,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body
-        className={`${lxgwWenKai.className} ${lxgwWenKaiMono.className} antialiased`}
+        className={`${Hei.className} antialiased`}
       >
         {children}
       </body>

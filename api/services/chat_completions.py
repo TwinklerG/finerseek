@@ -5,7 +5,7 @@ API_KEY = os.environ.get("API_KEY")
 url = "https://api.siliconflow.cn/v1/chat/completions"
 
 headers = {
-    "Authorization": f"Bearer {API_KEY}",
+    "Authorization": f"Bearer sk-pxuhdtkwfbtjgmuqbushmkomgxlsuhvzhealpkiewtvabcgc",
     "Content-Type": "application/json",
 }
 
