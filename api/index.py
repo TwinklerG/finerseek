@@ -1,4 +1,4 @@
-from fastapi import FastAPI
+from fastapi import FastAPI, UploadFile
 from fastapi.responses import StreamingResponse
 import uvicorn
 
@@ -21,6 +21,20 @@ def hello_fast_api():
 @app.post("/api/py/chat/completions")
 def chat_completions(payload: dict):
     return StreamingResponse(content=stream_chat_completions(payload))
+
+
+@app.post("/api/py/chat/upload")
+async def chat_upload(file: UploadFile):
+    print(file.filename)
+    import io, os
+
+    # Create tmp folder if it does not exist
+    if not os.path.exists("tmp"):
+        os.makedirs("tmp")
+
+    io.open(f"tmp/{file.filename}", "wb").write(await file.read())
+
+    return "Success Upload"
 
 
 if __name__ == "__main__":

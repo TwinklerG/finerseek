@@ -54,3 +54,6 @@ tmp.*
 
 # uploaded files
 uploads/
+
+# tmp files
+tmp/

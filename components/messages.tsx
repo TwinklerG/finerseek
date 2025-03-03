@@ -7,7 +7,7 @@ import useScrollToBottom from "./hooks/use-scroll-to-bottom";
 import { chats } from "@/lib/placeholders-data";
 import Markdown from "react-markdown";
 import rehypeRaw from "rehype-raw";
-import './style.css';
+import "./style.css";
 export function Messages({ id }: { id: number }) {
   const [messages, setMessages] = useState<{ role: string; content: string }[]>(
     []
