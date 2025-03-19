@@ -13,6 +13,22 @@ npm install
 npm run dev
 ```
 
+**About Milvus**
+
+How to set the environment?   
+- Only MacOS or Linux is supported.  
+
+Packages:
+```bash
+pip install --upgrade pymilvus "pymilvus[model] milvus_model"
+```
+
+How to init the database?
+```bash
+cd api/services
+HF_ENDPOINT=https://hf-mirror.com python database_initiation.py # connect to HuggingFace mirror server
+```
+
 **production**
 
 Deploy with Vercel
