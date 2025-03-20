@@ -1,12 +1,15 @@
 import type { Config } from "tailwindcss";
 import { blackA, mauve, violet, indigo, purple } from "@radix-ui/colors";
 import typography from "@tailwindcss/typography";
+import flyonui from "flyonui";
 
 export default {
   content: [
     "./pages/**/*.{js,ts,jsx,tsx,mdx}",
     "./components/**/*.{js,ts,jsx,tsx,mdx}",
     "./app/**/*.{js,ts,jsx,tsx,mdx}",
+    "./node_modules/flyonui/dist/js/*.js",
+    "./node_modules/flyonui/dist/js/accordion.js",
   ],
   theme: {
     extend: {
@@ -66,5 +69,5 @@ export default {
       },
     },
   },
-  plugins: [typography],
+  plugins: [typography, flyonui],
 } satisfies Config;

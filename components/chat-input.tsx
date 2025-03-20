@@ -1,17 +1,29 @@
-import { ArrowUpIcon } from "@radix-ui/react-icons";
-import { Dispatch, SetStateAction, useState } from "react";
-import "./style.css";
-import { Artifacts } from "./artifacts";
+import { IconArrowUp } from "@tabler/icons-react";
+import { Artifacts } from "@/components/artifacts";
+import React, { Dispatch, SetStateAction, useState, useRef } from "react";
+import './style.css';
+
 export function ChatInput({
-  messages,
-  setMessages,
-}: {
+                            messages,
+                            setMessages,
+                          }: {
   messages: { role: string; content: string }[];
   setMessages: Dispatch<SetStateAction<{ role: string; content: string }[]>>;
 }) {
   const [inputContent, setInputContent] = useState("");
+  const [showTooltip, setShowTooltip] = useState(false);
+  const textareaRef = useRef<HTMLTextAreaElement>(null); // 用于绑定 textarea
 
   const handleSubmit = () => {
+    // 检查输入内容是否为空或只包含换行符
+    if (!inputContent.trim()) {
+      // 如果输入内容为空或只包含换行符，显示提示信息
+      setShowTooltip(true);
+      setTimeout(() => setShowTooltip(false), 3000); // 3秒后隐藏提示信息
+      return; // 阻止发送
+    }
+
+    // 正常处理发送逻辑
     setMessages((messages) => [
       ...messages,
       { role: "user", content: inputContent },
@@ -20,7 +32,6 @@ export function ChatInput({
     const options = {
       method: "POST",
       headers: {
-        // Authorization: `Bearer ${process.env.NEXT_PUBLIC_API_KEY}`,
         "Content-Type": "application/json",
       },
       body: `{"stream":true,"messages":${JSON.stringify([
@@ -55,37 +66,90 @@ export function ChatInput({
     });
   };
 
-  return (
-    <>
-      <div className="overflow-auto h-full">
-        <textarea
-          className="bg-white dark:bg-custom-gray rounded-md p-1 w-full h-[70%] focus-visible:outline-none focus-visible:ring-2 border border-gray-300 dark:border-gray-800 focus-visible:border-blue-100"
-          value={inputContent}
-          onChange={(event) => {
-            setInputContent(event.target.value);
-          }}
-          onKeyDown={(event) => {
-            if (
-              inputContent.length !== 0 &&
-              event.key === "Enter" &&
-              event.shiftKey === false
-            ) {
-              handleSubmit();
-              event.preventDefault();
-            }
-          }}
-        ></textarea>
+  const handleInputChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+    const value = e.target.value;
+    setInputContent(value);
 
-        <div className="flex items-center justify-end h-fit">
-          <Artifacts />
-          <button
-            className="bg-blue-200 hover:bg-blue-300 dark:bg-blue-700 dark:hover:bg-blue-800 transition-all p-1 m-1 rounded-full"
-            onClick={handleSubmit}
-          >
-            <ArrowUpIcon />
-          </button>
+    // 如果输入内容有效，隐藏提示信息
+    if (value.trim()) {
+      setShowTooltip(false);
+    }
+  };
+
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
+    if (e.key === "Enter" && !e.shiftKey) {
+      e.preventDefault(); // 阻止默认换行行为
+
+      // 如果输入内容为空或只包含换行符
+      if (!inputContent.trim()) {
+        setShowTooltip(true); // 显示提示信息
+        setTimeout(() => setShowTooltip(false), 3000); // 3秒后隐藏提示信息
+      } else {
+        handleSubmit(); // 否则，触发发送逻辑
+      }
+    }
+  };
+
+  return (
+      <>
+        <div className="bottom-7 w-full z-30">
+          <div className="flex items-center justify-center w-full p-5">
+            {/* 输入区域容器 */}
+            <div className="flex items-end w-full relative">
+              {/* 文本输入框 */}
+              <textarea
+                  ref={textareaRef}
+                  className="bg-base-200 dark:bg-gray-700 rounded-xl p-3 w-full resize-none
+                  focus-visible:outline-none focus-visible:ring-0 border-2 border-gray-300 dark:border-gray-800 sidebar-scrollable"
+                  style={{ paddingRight: "100px" }} // 动态调整 padding-top
+                  placeholder="给FinerSeek发送消息"
+                  value={inputContent}
+                  onChange={handleInputChange}
+                  onKeyDown={handleKeyDown}
+                  rows={4} // 固定行数为 4 行
+              />
+
+              <div className="absolute right-3 bottom-3 flex items-center gap-2">
+                <Artifacts />
+
+                {/* 发送按钮 */}
+                <div className="group relative inline-block">
+                  <button
+                      className={`flex items-center justify-center p-2 rounded-full aspect-square transition-all mr-2.5
+                      ${
+                          inputContent.length === 0 || !inputContent.trim()
+                              ? "bg-gray-300 dark:bg-gray-500 cursor-not-allowed" // 禁用状态样式
+                              : "bg-blue-300 hover:bg-blue-400 dark:bg-blue-600 dark:hover:bg-blue-800" // 正常状态样式
+                      }`}
+                      onClick={handleSubmit}
+                      disabled={inputContent.length === 0 || !inputContent.trim()} // 禁用按钮
+                  >
+                    <IconArrowUp
+                        className={`size-[1.3rem] transition-colors ${
+                            inputContent.length === 0 || !inputContent.trim() ? "text-gray-100" : "text-white" // 动态设置图标颜色
+                        }`}
+                    />
+                  </button>
+                  {/* 提示信息 */}
+                  {showTooltip && (
+                      <div
+                          className="absolute bottom-full left-1/2 transform -translate-y-1/4 -translate-x-1/2 px-3 py-1 bg-base-content text-white text-sm rounded whitespace-nowrap z-30"
+                      >
+                        请输入你的问题
+                      </div>
+                  )}
+                  {inputContent.length === 0 && (
+                      <div
+                          className="absolute bottom-full left-1/2 transform -translate-y-1/4 -translate-x-1/2 px-3 py-1 bg-base-content text-white text-sm rounded opacity-0 group-hover:opacity-100 transition-opacity duration-200 whitespace-nowrap z-30"
+                      >
+                        请输入你的问题
+                      </div>
+                  )}
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
-      </div>
-    </>
+      </>
   );
 }
