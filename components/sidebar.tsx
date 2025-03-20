@@ -11,6 +11,7 @@ import {
   UserBtn2,
 } from "./btn"
 import "./style.css";
+import Image from 'next/image';
 
 const PureSieBar = ({
                       hide, setHide, id, setId, isLoggedIn, setIsLoggedIn,
@@ -41,16 +42,17 @@ const PureSieBar = ({
             <div className="bg-white dark:bg-custom-gray flex flex-col items-center justify-start h-full p-5">
 
               <div className="mb-3 mt-2"> {/* 添加 margin-bottom 以与按钮保持间距 */}
-                <img
-                    src="/finerseek_logo.png"
-                    alt="Logo"
-                    className="w-10 h-11" // 根据需要调整 Logo 的大小
-                />
+                  <Image
+                      src="/finerseek_logo.png"
+                      alt="logo"
+                      width={500} // 图片宽度
+                      height={300} // 图片高度
+                  />
               </div>
 
               <OpenSidebarBtn setHide={setHide} />
               <NewDialogBtn1 setHide={setHide} setId={setId} />
-              <UserBtn1 isLoggedIn={isLoggedIn} setIsLoggedIn={setIsLoggedIn} />
+              <UserBtn1 isLoggedIn={isLoggedIn} />
 
             </div>
         ) : (
