@@ -16,22 +16,6 @@ from pymilvus import (
     Collection,
 )
 
-# 定义集合
-def create_collection():
-    schema = client.create_schema(auto_id=True, enable_dynamic_field=False)
-    schema.add_field(field_name="vector", datatype=DataType.FLOAT_VECTOR, dim=384)
-    schema.add_field(field_name="text", datatype=DataType.VARCHAR, max_length=2000)
-    schema.add_field(field_name="filename", datatype=DataType.VARCHAR, max_length=255)
-
-    try:
-        client.create_collection(
-            collection_name=collection_name,
-            schema=schema
-        )
-    except Exception as e:
-        # 若集合已存在则忽略
-        pass
-
 # 提取 PDF 文件的文本
 def extract_text_from_pdf(file_path):
     with open(file_path, 'rb') as file:
@@ -87,42 +71,62 @@ def extract_text(file_path):
 
 # 处理并存储数据
 def process_and_store(file_path):
-    # Embedding 模型定义
-    bge_m3_ef = BGEM3EmbeddingFunction(
-        model_name='BAAI/bge-m3', # Specify the model name
-        device='cpu', # Specify the device to use, e.g., 'cpu' or 'cuda:0'
-        use_fp16=False # Specify whether to use fp16. Set to `False` if `device` is `cpu`.
-    )
-    dense_dim = bge_m3_ef.dim["dense"]
-
-    collection_name = "text_collection"
-    # 连接 Milvus Lite 数据库
-    connections.connect(uri="./milvus.db")
-
     # 提取文件内容
     text = extract_text(file_path)
     if text:
-        create_collection()
         chunks = split_text(text)
-        # 对文本块进行编码
-        embeddings = bge_m3_ef.encode_documents(chunks)
 
         # 存储数据（TODO）
         filename = os.path.basename(file_path)
+
+        # Embedding 模型定义
+        bge_m3_ef = BGEM3EmbeddingFunction(
+            model_name='BAAI/bge-m3',  # Specify the model name
+            device='cpu',  # Specify the device to use, e.g., 'cpu' or 'cuda:0'
+            use_fp16=False  # Specify whether to use fp16. Set to `False` if `device` is `cpu`.
+        )
+
+        doc_embeddings = bge_m3_ef(chunks)
+
+        # 准备批量插入的数据
+        texts = []
+        filenames = []
+        sparse_vectors = []
+        dense_vectors = []
+
+        for chunk in chunks:
+            # texts.append(chunk)
+            filenames.append(filename)
+            # sparse_vectors.append(emb['sparse'])
+            # dense_vectors.append(emb['dense'])
+
         data = [
-            {"vector": emb.tolist(), "text": chunk, "filename": filename}
-            for chunk, emb in zip(chunks, embeddings)
+            chunks,
+            filenames,
+            doc_embeddings["sparse"],
+            doc_embeddings["dense"],
         ]
+
+        # 连接 Milvus Lite 数据库
+        connections.connect(uri="./milvus.db")
+
         col_name = "hybrid_demo"
         col = Collection(col_name)
         col.load()
+
+        # 批量插入数据
         col.insert(data=data)
+
         col.release()
+
+        # 关闭连接
+        connections.disconnect(alias="default")
+
         return "Success"
     return "Failed"
 
 # 调用示例
 if __name__ == '__main__':
-    file_path = "example.pdf"  # 替换为实际文件路径
+    file_path = "贵州茅台（600519）.pdf"  # 替换为实际文件路径
     result = process_and_store(file_path)
     print(result)

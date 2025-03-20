@@ -1,7 +1,3 @@
-from pymilvus import MilvusClient
-client = MilvusClient("./milvus_demo.db")
-
-
 from pymilvus import (
     connections,
     utility,
@@ -43,4 +39,9 @@ sparse_index = {"index_type": "SPARSE_INVERTED_INDEX", "metric_type": "IP"}
 col.create_index("sparse_vector", sparse_index)
 dense_index = {"index_type": "AUTOINDEX", "metric_type": "IP"}
 col.create_index("dense_vector", dense_index)
-# col.load()
+col.load()
+col.release()
+
+# 在脚本末尾显式关闭连接
+connections.disconnect(alias="default")  # 若未指定alias则默认是"default"
+
