@@ -10,8 +10,6 @@ import {Suspense, useState} from "react";
 export default function Page() {
   const windowSize = useWindowSize();
   const [hideSidebar, setHideSidebar] = useState(windowSize.width < 768);
-  const [isTopBarOpen, setIsTopBarOpen] = useState(true); // 控制顶栏的展开与收起
-  const [isSideBarOpen, setIsSideBarOpen] = useState(false);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [id, setId] = useState(-1);
 

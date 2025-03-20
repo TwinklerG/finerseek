@@ -119,9 +119,8 @@ export const CloseSidebarBtn = ({setHide}:{
     )
 }
 
-export const UserBtn1 = ({ isLoggedIn, setIsLoggedIn }: {
+export const UserBtn1 = ({ isLoggedIn }: {
     isLoggedIn: boolean;
-    setIsLoggedIn: Dispatch<SetStateAction<boolean>>;
 }) => {
     const [showOptions, setShowOptions] = useState(false); // 控制选项栏的显示
     const dropdownRef = useRef<HTMLDivElement>(null); // 选项栏的引用
@@ -149,16 +148,6 @@ export const UserBtn1 = ({ isLoggedIn, setIsLoggedIn }: {
             document.removeEventListener("mousedown", handleClickOutside);
         };
     }, []);
-
-    const handleLogin = () => {
-        setIsLoggedIn(true);
-        setShowOptions(false);
-    };
-
-    const handleLogout = () => {
-        setIsLoggedIn(false);
-        setShowOptions(false);
-    };
 
     return (
         <div className="mt-auto relative inline-flex rtl:[--placement:bottom-end]">
@@ -246,22 +235,12 @@ export const UserBtn1 = ({ isLoggedIn, setIsLoggedIn }: {
         </div>
     );
 };
-export const UserBtn2 = ({isLoggedIn, setIsLoggedIn,}:{
+export const UserBtn2 = ({isLoggedIn }:{
             isLoggedIn: boolean;
             setIsLoggedIn: Dispatch<SetStateAction<boolean>>;
         }) => {
             const [showOptions, setShowOptions] = useState(false);
-            // 处理登录
-            const handleLogin = () => {
-            setIsLoggedIn(true);
-            setShowOptions(false); // 登录后隐藏选项
-        };
 
-            // 处理退出登录
-            const handleLogout = () => {
-            setIsLoggedIn(false);
-            setShowOptions(false); // 退出登录后隐藏选项
-        };
             return (
             <div className="mt-auto relative w-full p-4">
         {/* 登录按钮 */}

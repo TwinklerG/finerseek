@@ -30,7 +30,7 @@ export function Messages({ id }: { id: number }) {
                 behavior: "smooth",
             });
         }
-    }, [messages]);
+    }, [messages, messagesContainerRef]);
 
     const handleCopy = (content: string, index: number) => {
         navigator.clipboard
@@ -68,7 +68,7 @@ export function Messages({ id }: { id: number }) {
 
     return (
         <div className="flex flex-col items-center h-full w-full transition-all duration-300">
-            <TopBar isTopBarOpen={isTopBarOpen} setIsTopBarOpen={setIsTopBarOpen} />
+            <TopBar isTopBarOpen={isTopBarOpen} />
             <TopBarBtn isTopBarOpen={isTopBarOpen} setIsTopBarOpen={setIsTopBarOpen} />
 
             <div className={clsx("flex flex-col w-full h-full bg-white dark:bg-custom-gray items-center transition-all duration-300 overflow-auto")}>

@@ -1,6 +1,5 @@
 import "./style.css";
 import { useState, useEffect } from 'react';
-import { Dispatch, SetStateAction } from "react";
 
 const fetchData = [
     { name: '原油', value: 79.16, change: 0.73 },
@@ -12,9 +11,8 @@ const fetchData = [
     { name: '标普500', value: 4954.23, change: 0.23 },
 ];
 
-export const TopBar = ({ isTopBarOpen, setIsTopBarOpen }: {
+export const TopBar = ({ isTopBarOpen }: {
     isTopBarOpen: boolean;
-    setIsTopBarOpen: Dispatch<SetStateAction<boolean>>;
 }) => {
     const [activeIndex, setActiveIndex] = useState(0);
 
@@ -78,16 +76,22 @@ export const TopBar = ({ isTopBarOpen, setIsTopBarOpen }: {
                 <nav className="tabs tabs-bordered justify-center mt-0 mb-1" aria-label="Tabs" role="tablist">
                     <button
                         type="button"
+                        role="tab"
                         className={`tab ${activeIndex === 0 ? 'tab-active' : ''}`}
                         onClick={() => handleTabChange(0)}
                         aria-selected={activeIndex === 0}
+                        aria-controls="tabpanel-0" // 关联的 tabpanel 的 id
+                        id="tab-0" // 当前 tab 的 id
                     >
                     </button>
                     <button
                         type="button"
+                        role="tab"
                         className={`tab ${activeIndex === 1 ? 'tab-active' : ''}`}
                         onClick={() => handleTabChange(1)}
                         aria-selected={activeIndex === 1}
+                        aria-controls="tabpanel-1" // 关联的 tabpanel 的 id
+                        id="tab-1" // 当前 tab 的 id
                     >
                     </button>
                 </nav>
