@@ -1,7 +1,8 @@
 import "./style.css";
 import { useWindowSize } from "./hooks/use-window-size";
 import React, { Dispatch, SetStateAction } from "react";
-import { useState } from 'react';
+import { useState, useEffect, useRef } from 'react';
+import {IconSettings, IconSend, IconTrash, IconLogin, IconLogout, IconUser} from "@tabler/icons-react";
 
 export const TopBarBtn = ({ isTopBarOpen, setIsTopBarOpen }: {
     isTopBarOpen: boolean;
@@ -118,83 +119,152 @@ export const CloseSidebarBtn = ({setHide}:{
     )
 }
 
-export const UserBtn1 = ({isLoggedIn, setIsLoggedIn}: {
+export const UserBtn1 = ({ isLoggedIn, setIsLoggedIn }: {
     isLoggedIn: boolean;
     setIsLoggedIn: Dispatch<SetStateAction<boolean>>;
 }) => {
-    const [showOptions, setShowOptions] = useState(false);
-    // 处理登录
+    const [showOptions, setShowOptions] = useState(false); // 控制选项栏的显示
+    const dropdownRef = useRef<HTMLDivElement>(null); // 选项栏的引用
+    const buttonRef = useRef<HTMLButtonElement>(null); // 按钮的引用
+
+    // 点击页面其他位置时关闭选项栏
+    useEffect(() => {
+        const handleClickOutside = (event: MouseEvent) => {
+            // 如果点击的目标不在选项栏或按钮的范围内
+            if (
+                dropdownRef.current &&
+                !dropdownRef.current.contains(event.target as Node) &&
+                buttonRef.current &&
+                !buttonRef.current.contains(event.target as Node)
+            ) {
+                setShowOptions(false); // 关闭选项栏
+            }
+        };
+
+        // 添加点击事件监听器
+        document.addEventListener("mousedown", handleClickOutside);
+
+        // 清除事件监听器
+        return () => {
+            document.removeEventListener("mousedown", handleClickOutside);
+        };
+    }, []);
+
     const handleLogin = () => {
         setIsLoggedIn(true);
-        setShowOptions(false); // 登录后隐藏选项
+        setShowOptions(false);
     };
 
-    // 处理退出登录
     const handleLogout = () => {
         setIsLoggedIn(false);
-        setShowOptions(false); // 退出登录后隐藏选项
+        setShowOptions(false);
     };
 
     return (
-        <div className="mt-auto relative">
-            <button id="dropdown-scrollable" type="button"
-                    className="dropdown-toggle btn btn-text btn-circle dropdown-open:bg-base-content/10 size-10"
-                    onClick={() => setShowOptions(!showOptions)}>
-                        <span className="icon-[tabler--user] text-base-content size-[1.375rem]">
-                        </span>
+        <div className="mt-auto relative inline-flex rtl:[--placement:bottom-end]">
+            {/* 按钮 */}
+            <button
+                ref={buttonRef}
+                id="dropdown-footer"
+                type="button"
+                className="btn btn-text btn-circle"
+                popoverTarget="popover-1"
+                aria-haspopup="menu"
+                onClick={() => setShowOptions(!showOptions)}
+            >
+                <span className="icon-[tabler--user] text-base-content size-[1.375rem] dropdown-open:rotate-180"></span>
             </button>
+
+            {/* 下拉菜单 */}
             {showOptions && (
-                <div className="absolute bottom-full left-0 mb-2 w-40 bg-white dark:bg-gray-800 rounded-md shadow-lg z-10">
+                <div
+                    ref={dropdownRef}
+                    className="absolute bottom-full left-0 mb-2 w-50 bg-white dark:bg-gray-800 rounded-md shadow-lg z-10">
                     {isLoggedIn ? (
-                        // 已登录时的选项
-                        <>
-                            <button
-                                className="block w-full px-2 py-1 text-sm text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700"
-                                onClick={handleLogout}
-                            >
-                                退出登录
-                            </button>
-                            <button
-                                className="block w-full px-2 py-1 text-sm text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700"
-                                onClick={handleLogout}
-                            >
-                                删除所有会话
-                            </button>
-                        </>
+                        <ul className="dropdown menu w-32 rounded-box bg-base-100 shadow-sm">
+                            <li className="p-1 flex justify-center items-center">
+                                <a className="dropdown-item text-gray-800 dark:text-gray-200 flex items-center gap-2">
+                                    <IconUser className="size-5" />
+                                    我的个人信息
+                                </a>
+                            </li>
+                            <li className="p-0 flex justify-center items-center">
+                                <a className="dropdown-item text-gray-800 dark:text-gray-200 flex items-center gap-2 whitespace-nowrap">
+                                    <IconTrash className="size-5" />
+                                    删除所有对话
+                                </a>
+                            </li>
+                            <li className="p-0 flex justify-center items-center">
+                                <a className="dropdown-item text-gray-800 dark:text-gray-200 flex items-center gap-2 whitespace-nowrap">
+                                    <IconSettings className="size-5" />
+                                    设置
+                                </a>
+                            </li>
+                            <li className="p-0 flex justify-center items-center">
+                                <a className="dropdown-item text-gray-800 dark:text-gray-200 flex items-center gap-2 whitespace-nowrap">
+                                    <IconSend className="size-5" />
+                                    联系我们
+                                </a>
+                            </li>
+                            <li className="p-0 flex justify-center items-center">
+                                <a className="dropdown-item text-gray-800 dark:text-gray-200 flex items-center gap-2 whitespace-nowrap">
+                                    <IconLogout className="size-5" />
+                                    退出登录
+                                </a>
+                            </li>
+                        </ul>
                     ) : (
-                        // 未登录时的选项
-                        <button
-                            className="block w-full px-4 py-2 text-sm text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700"
-                            onClick={handleLogin}
-                        >
-                            登入
-                        </button>
+                        <ul className="dropdown menu w-full rounded-box bg-base-100 shadow-sm">
+                            <li className="p-0  flex justify-center items-center">
+                                <a className="dropdown-item text-gray-800 dark:text-gray-200 flex items-center gap-2 whitespace-nowrap">
+                                    <IconTrash className="size-5" />
+                                    删除所有对话
+                                </a>
+                            </li>
+                            <li className="p-0  flex justify-center items-center">
+                                <a className="dropdown-item text-gray-800 dark:text-gray-200 flex items-center gap-2 whitespace-nowrap">
+                                    <IconSettings className="size-5" />
+                                    设置
+                                </a>
+                            </li>
+                            <li className="p-0  flex justify-center items-center">
+                                <a className="dropdown-item text-gray-800 dark:text-gray-200 flex items-center gap-2 whitespace-nowrap">
+                                    <IconSend className="size-5" />
+                                    联系我们
+                                </a>
+                            </li>
+                            <li className="p-0  flex justify-center items-center">
+                                <a className="dropdown-item text-gray-800 dark:text-gray-200 flex items-center gap-2 whitespace-nowrap">
+                                    <IconLogin className="size-5" />
+                                    登录
+                                </a>
+                            </li>
+                        </ul>
                     )}
                 </div>
             )}
         </div>
-    )
-}
-
+    );
+};
 export const UserBtn2 = ({isLoggedIn, setIsLoggedIn,}:{
-    isLoggedIn: boolean;
-    setIsLoggedIn: Dispatch<SetStateAction<boolean>>;
-}) => {
-    const [showOptions, setShowOptions] = useState(false);
-    // 处理登录
-    const handleLogin = () => {
-        setIsLoggedIn(true);
-        setShowOptions(false); // 登录后隐藏选项
-    };
+            isLoggedIn: boolean;
+            setIsLoggedIn: Dispatch<SetStateAction<boolean>>;
+        }) => {
+            const [showOptions, setShowOptions] = useState(false);
+            // 处理登录
+            const handleLogin = () => {
+            setIsLoggedIn(true);
+            setShowOptions(false); // 登录后隐藏选项
+        };
 
-    // 处理退出登录
-    const handleLogout = () => {
-        setIsLoggedIn(false);
-        setShowOptions(false); // 退出登录后隐藏选项
-    };
-    return (
-        <div className="mt-auto relative w-full p-4">
-            {/* 登录按钮 */}
+            // 处理退出登录
+            const handleLogout = () => {
+            setIsLoggedIn(false);
+            setShowOptions(false); // 退出登录后隐藏选项
+        };
+            return (
+            <div className="mt-auto relative w-full p-4">
+        {/* 登录按钮 */}
 
             {isLoggedIn ? (
                 <ul className="menu p-2 justify-center items-center bg-white dark:bg-custom-gray">
@@ -212,7 +282,7 @@ export const UserBtn2 = ({isLoggedIn, setIsLoggedIn,}:{
                         <a href="#">
                         <span className="icon-[tabler--user] size-5 justify-center"
                               onClick={() => setShowOptions(!showOptions)}></span>
-                            登入
+                            登录
                         </a>
                     </li>
                 </ul>

@@ -1,6 +1,6 @@
 import { IconArrowUp } from "@tabler/icons-react";
 import { Artifacts } from "@/components/artifacts";
-import React, { Dispatch, SetStateAction, useState, useEffect, useRef } from "react";
+import React, { Dispatch, SetStateAction, useState, useRef } from "react";
 import './style.css';
 
 export function ChatInput({
@@ -13,17 +13,6 @@ export function ChatInput({
   const [inputContent, setInputContent] = useState("");
   const [showTooltip, setShowTooltip] = useState(false);
   const textareaRef = useRef<HTMLTextAreaElement>(null); // 用于绑定 textarea
-
-  // 动态调整 textarea 高度
-  useEffect(() => {
-    if (textareaRef.current) {
-      textareaRef.current.style.height = "auto"; // 重置高度
-      textareaRef.current.style.height = `${Math.min(
-          textareaRef.current.scrollHeight,
-          300 // 最大高度为 300px
-      )}px`;
-    }
-  }, [inputContent]); // 当 inputContent 变化时触发
 
   const handleSubmit = () => {
     // 检查输入内容是否为空或只包含换行符
@@ -106,30 +95,28 @@ export function ChatInput({
         <div className="bottom-7 w-full z-30">
           <div className="flex items-center justify-center w-full p-5">
             {/* 输入区域容器 */}
-            <div className="flex items-end w-full max-w-2xl relative">
+            <div className="flex items-end w-full relative">
               {/* 文本输入框 */}
               <textarea
                   ref={textareaRef}
-                  className="bg-base-200 dark:bg-gray-700 rounded-xl p-3 w-full h-full max-h-full resize-none
-                focus-visible:outline-none focus-visible:ring-0 border-2 border-gray-300 dark:border-gray-800"
-                  style={{ paddingRight: "100px" }} // 为按钮留出空间
+                  className="bg-base-200 dark:bg-gray-700 rounded-xl p-3 w-full resize-none
+                  focus-visible:outline-none focus-visible:ring-0 border-2 border-gray-300 dark:border-gray-800 sidebar-scrollable"
+                  style={{ paddingRight: "100px" }} // 动态调整 padding-top
                   placeholder="给FinerSeek发送消息"
                   value={inputContent}
                   onChange={handleInputChange}
                   onKeyDown={handleKeyDown}
-                  rows={4} // 初始行数
+                  rows={4} // 固定行数为 4 行
               />
 
-              {/* 按钮容器 */}
-
               <div className="absolute right-3 bottom-3 flex items-center gap-2">
-                <Artifacts/>
+                <Artifacts />
 
                 {/* 发送按钮 */}
                 <div className="group relative inline-block">
                   <button
                       className={`flex items-center justify-center p-2 rounded-full aspect-square transition-all mr-2.5
-      ${
+                      ${
                           inputContent.length === 0 || !inputContent.trim()
                               ? "bg-gray-300 dark:bg-gray-500 cursor-not-allowed" // 禁用状态样式
                               : "bg-blue-300 hover:bg-blue-400 dark:bg-blue-600 dark:hover:bg-blue-800" // 正常状态样式

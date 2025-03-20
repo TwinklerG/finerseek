@@ -40,11 +40,11 @@ const PureSieBar = ({
             // 当 hide 为 true 时显示的内容
             <div className="bg-white dark:bg-custom-gray flex flex-col items-center justify-start h-full p-5">
 
-              <div className="mb-7"> {/* 添加 margin-bottom 以与按钮保持间距 */}
+              <div className="mb-3 mt-2"> {/* 添加 margin-bottom 以与按钮保持间距 */}
                 <img
-                    src="/logo.png"
+                    src="/finerseek_logo.png"
                     alt="Logo"
-                    className="w-10 h-8" // 根据需要调整 Logo 的大小
+                    className="w-10 h-11" // 根据需要调整 Logo 的大小
                 />
               </div>
 
@@ -68,7 +68,7 @@ const PureSieBar = ({
 
               <NewDialogBtn2 setHide={setHide} setId={setId} />
 
-              <div className="flex-grow overflow-y-scroll transition-all duration-300 ">
+              <div className="flex-grow overflow-y-scroll sidebar-scrollable transition-all duration-300 ">
                 <ul className="menu p-2 bg-white dark:bg-custom-gray">
                   {historys.map((history, index) =>
                       id === index ? (
