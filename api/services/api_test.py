@@ -15,10 +15,31 @@ headers = {
 def test_api():
     # 构建一个简单的请求负载
     payload = {
+        "model": "Qwen/QwQ-32B",
         "messages": [
             {
                 "role": "user",
-                "content": "这是一个测试消息"
+                "content": f"中国大模型行业近年来发展迅速，吸引了大量投资和人才,中国大模型行业在2025年将面临哪些机会和挑战？"
+            }
+        ],
+        "stream": False,
+        "max_tokens": 512,
+        "stop": None,
+        "temperature": 0.7,
+        "top_p": 0.7,
+        "top_k": 50,
+        "frequency_penalty": 0.5,
+        "n": 1,
+        "response_format": {"type": "text"},
+        "tools": [
+            {
+                "type": "function",
+                "function": {
+                    "description": "<string>",
+                    "name": "<string>",
+                    "parameters": {},
+                    "strict": False
+                }
             }
         ]
     }

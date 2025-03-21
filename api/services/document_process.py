@@ -1,6 +1,7 @@
 import io
 import os
 import pandas as pd
+import openpyxl
 from fastapi import FastAPI, UploadFile
 from pymilvus import MilvusClient, DataType
 from PyPDF2 import PdfReader
@@ -16,22 +17,112 @@ from pymilvus import (
     Collection,
 )
 
+
+# 调用更好的文件处理函数
+from api.services.extract_ultils import *
+import shutil
+
 # 提取 PDF 文件的文本
 def pdf_text_generation(file_path):
-    with open(file_path, 'rb') as file:
-        reader = PdfReader(file)
+    # 提取文件名
+    file_name = os.path.basename(file_path)
+    cache_folder = f"./tmp/{file_name}.cache"
+    input_folder = os.path.join(cache_folder, "input")
+    output_folder = os.path.join(cache_folder, "output")
+
+    # 创建缓存文件夹和输入输出文件夹
+    os.makedirs(input_folder, exist_ok=True)
+    os.makedirs(output_folder, exist_ok=True)
+
+    # 复制文件到输入文件夹
+    try:
+        shutil.copy2(file_path, input_folder)
+    except FileNotFoundError:
+        print(f"Error: The file {file_path} was not found.")
+        return None
+    except Exception as e:
+        print(f"Error: An unexpected error occurred while copying the file: {e}")
+        return None
+
+    # 转化
+    batch_convert_word_to_pdf(input_folder, input_folder)
+    # 处理文件夹中的所有 PDF 文件
+    process_folder(input_folder, output_folder)
+
+    # 读取 text.txt 文件内容
+    text_file_path = os.path.join(output_folder, "text.txt")
+    try:
+        with open(text_file_path, 'r', encoding='utf-8') as file:
+            text = file.read()
+    except FileNotFoundError:
+        print(f"Error: The file {text_file_path} was not found.")
         text = ""
-        for page in reader.pages:
-            text += page.extract_text()
-    return text
+    except Exception as e:
+        print(f"Error: An unexpected error occurred while reading the file: {e}")
+        text = ""
+
+    combined_text = text
+
+    # 新增：处理CSV文件
+    for file in os.listdir(output_folder):
+        if file.lower().endswith('.csv'):
+            csv_path = os.path.join(output_folder, file)
+            combined_text += csv_text_generation(csv_path)
+
+    # 新增：处理图片文件
+    for file in os.listdir(output_folder):
+        if file.lower().endswith(('.jpg', '.jpeg', '.png')):
+            img_path = os.path.join(output_folder, file)
+            combined_text += img_text_generation(img_path)
+
+    return combined_text
 
 # 提取 Word 文件的文本
 def doc_text_generation(file_path):
-    doc = Document(file_path)
-    text = ""
-    for para in doc.paragraphs:
-        text += para.text
-    return text
+    return pdf_text_generation(file_path)
+
+# 提取 CSV 文件的文本
+def csv_text_generation(file_path):
+    try:
+        df = pd.read_csv(file_path)
+        text = "\n".join([", ".join(row) for row in df.values])
+        return text
+    except Exception as e:
+        print("An error occurred while processing the CSV file:", str(e))
+        return ""
+
+# 提取 Excel 文件的文本
+def excel_text_generation(file_path):
+    """
+    从给定Excel文件中提取所有单元格中的文本内容，并返回为单个字符串。
+
+    参数:
+        file_path (str): Excel文件的路径。
+
+    返回:
+        str: 提取出的文本内容。
+    """
+    # 读取Excel文件（兼容xls和xlsx）
+    df = pd.read_excel(file_path, sheet_name=None)
+
+    all_text = []
+
+    # 遍历所有的sheet
+    for sheet_name, data in df.items():
+        # 将DataFrame转换为字符串形式，并去除NaN值
+        sheet_text = data.fillna('').astype(str).values
+
+        # 拼接文本，逐行逐列合并
+        for row in sheet_text:
+            all_text.extend(row)
+
+    # 使用空格连接所有单元格文本
+    return ' '.join(all_text)
+    
+# 提取图片文件的文本
+def img_text_generation(file_path):
+    # 使用大模型生成caption（输出详细而复杂的信息）
+    return "Image caption"
 
 # 分块文本函数
 def split_text(text, chunk_size=300, overlap=50):
@@ -61,9 +152,12 @@ def extract_text(file_path):
         return pdf_text_generation(file_path)
     elif ext == '.docx':
         return doc_text_generation(file_path)
+    elif ext == '.xls' or ext == '.xlsx':
+        return excel_text_generation(file_path)
     elif ext == '.csv':
-        df = pd.read_csv(file_path)
-        return "\n".join(df.iloc[:,0].dropna().astype(str))
+        return csv_text_generation(file_path)
+    elif ext == '.jpg' or ext == '.jpeg' or ext == '.png':
+        return img_text_generation(file_path)
     elif ext == '.txt':
         with open(file_path, 'r', encoding='utf-8') as f:
             return f.read()
