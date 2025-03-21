@@ -20,13 +20,12 @@ How to set the environment?
 
 Packages:
 ```bash
-pip install --upgrade pymilvus "pymilvus[model] milvus_model"
+pip install --upgrade pymilvus milvus_model "pymilvus[model] milvus_model"
 ```
 
 How to init the database?
 ```bash
-cd api/services
-HF_ENDPOINT=https://hf-mirror.com python database_initiation.py # connect to HuggingFace mirror server
+HF_ENDPOINT=https://hf-mirror.com python api/services/database_initiation.py # connect to HuggingFace mirror server
 ```
 
 **About PDF-extractor**

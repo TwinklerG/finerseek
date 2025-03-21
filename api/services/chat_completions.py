@@ -114,6 +114,9 @@ def rag_qa(payload, top_k=3):
     # 确保 dense_results、sparse_results 和 hybrid_results 的元素都是字符串类型
     all_results = list(map(str, dense_results + sparse_results + hybrid_results))
     
+    # 测试检索功能
+    # print(all_results)
+
     # 将结果拼接为上下文字符串
     context = "\n---\n".join(all_results)
     
@@ -160,12 +163,19 @@ def stream_chat_completions(payload: dict):
 
 # 调用示例
 if __name__ == '__main__':
-    # 示例 payload
+    # 模拟一个聊天 payload
     payload = {
         "messages": [
-            {"role": "system", "content": "你是一个智能问答助手。"},
-            {"role": "user", "content": "Milvus数据库是什么？"}
+            {"role": "system", "content": "你是一个知识问答助手"},
+            {"role": "user", "content": "什么是向量数据库？"}
         ]
     }
-    for output in stream_chat_completions(payload):
-        print(output, end='')
+
+    # 调用 rag_qa 函数
+    response = rag_qa(payload)
+
+    # 输出返回结果（注意这里是流式返回，所以我们一行一行打印）
+    print("响应内容：")
+    for line in response.iter_lines():
+        if line:
+            print(line.decode("utf-8"))
