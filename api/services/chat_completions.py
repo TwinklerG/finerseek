@@ -83,8 +83,9 @@ def rag_qa(payload, top_k=3):
     # 连接Milvus数据库
     # Connect to Milvus given URI
     connections.connect(uri="./milvus.db")
-    collection_name = "chat_collection"
+    collection_name = "hybrid_demo"
     col = Collection(collection_name)
+    col.load()
 
     # 编码用户的问题
     bge_m3_ef = BGEM3EmbeddingFunction(
@@ -106,6 +107,9 @@ def rag_qa(payload, top_k=3):
         sparse_weight=0.7,
         dense_weight=1.0,
     )
+
+    col.release()
+    connections.disconnect(alias="default")
 
     # 确保 dense_results、sparse_results 和 hybrid_results 的元素都是字符串类型
     all_results = list(map(str, dense_results + sparse_results + hybrid_results))
@@ -152,3 +156,16 @@ def stream_chat_completions(payload: dict):
             time.sleep(0)
     else:
         yield "API error"
+
+
+# 调用示例
+if __name__ == '__main__':
+    # 示例 payload
+    payload = {
+        "messages": [
+            {"role": "system", "content": "你是一个智能问答助手。"},
+            {"role": "user", "content": "Milvus数据库是什么？"}
+        ]
+    }
+    for output in stream_chat_completions(payload):
+        print(output, end='')

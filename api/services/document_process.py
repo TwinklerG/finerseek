@@ -17,7 +17,7 @@ from pymilvus import (
 )
 
 # 提取 PDF 文件的文本
-def extract_text_from_pdf(file_path):
+def pdf_text_generation(file_path):
     with open(file_path, 'rb') as file:
         reader = PdfReader(file)
         text = ""
@@ -26,7 +26,7 @@ def extract_text_from_pdf(file_path):
     return text
 
 # 提取 Word 文件的文本
-def extract_text_from_docx(file_path):
+def doc_text_generation(file_path):
     doc = Document(file_path)
     text = ""
     for para in doc.paragraphs:
@@ -58,9 +58,9 @@ def split_text(text, chunk_size=300, overlap=50):
 def extract_text(file_path):
     ext = os.path.splitext(file_path)[1].lower()
     if ext == '.pdf':
-        return extract_text_from_pdf(file_path)
+        return pdf_text_generation(file_path)
     elif ext == '.docx':
-        return extract_text_from_docx(file_path)
+        return doc_text_generation(file_path)
     elif ext == '.csv':
         df = pd.read_csv(file_path)
         return "\n".join(df.iloc[:,0].dropna().astype(str))

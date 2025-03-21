@@ -29,6 +29,15 @@ cd api/services
 HF_ENDPOINT=https://hf-mirror.com python database_initiation.py # connect to HuggingFace mirror server
 ```
 
+**About PDF-extractor**
+
+Linux:
+```bash
+sudo apt-get update
+sudo apt-get install ghostscript
+pip install "camelot-py[cv]"
+```
+
 **production**
 
 Deploy with Vercel
