@@ -13,6 +13,30 @@ npm install
 npm run dev
 ```
 
+**About Milvus**
+
+How to set the environment?   
+- Only MacOS or Linux is supported.  
+
+Packages:
+```bash
+pip install --upgrade pymilvus milvus_model "pymilvus[model] milvus_model"
+```
+
+How to init the database?
+```bash
+HF_ENDPOINT=https://hf-mirror.com python api/services/database_initiation.py # connect to HuggingFace mirror server
+```
+
+**About PDF-extractor**
+
+Linux:
+```bash
+sudo apt-get update
+sudo apt-get install ghostscript
+pip install "camelot-py[cv]"
+```
+
 **production**
 
 Deploy with Vercel

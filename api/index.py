@@ -3,6 +3,7 @@ from fastapi.responses import StreamingResponse
 import uvicorn
 
 from api.services.chat_completions import stream_chat_completions
+from api.services.document_process import process_and_store
 
 ### Create FastAPI instance with custom docs and openapi url
 app = FastAPI(docs_url="/api/py/docs", openapi_url="/api/py/openapi.json")
@@ -34,7 +35,9 @@ async def chat_upload(file: UploadFile):
 
     io.open(f"tmp/{file.filename}", "wb").write(await file.read())
 
-    return "Success Upload"
+    result = process_and_store(f"tmp/{file.filename}") # process and store the file (automaticly)
+
+    return result
 
 
 if __name__ == "__main__":
