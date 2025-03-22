@@ -85,7 +85,7 @@ def doc_text_generation(file_path):
 def csv_text_generation(file_path):
     try:
         df = pd.read_csv(file_path)
-        text = "\n".join([", ".join(row) for row in df.values])
+        text = df.to_markdown(index=True)
         return text
     except Exception as e:
         print("An error occurred while processing the CSV file:", str(e))
@@ -94,30 +94,31 @@ def csv_text_generation(file_path):
 # 提取 Excel 文件的文本
 def excel_text_generation(file_path):
     """
-    从给定Excel文件中提取所有单元格中的文本内容，并返回为单个字符串。
+    从给定Excel文件中提取所有sheet的数据，转换成Markdown格式文本。
 
     参数:
         file_path (str): Excel文件的路径。
 
     返回:
-        str: 提取出的文本内容。
+        str: 提取出的所有sheet的Markdown文本内容。
     """
-    # 读取Excel文件（兼容xls和xlsx）
-    df = pd.read_excel(file_path, sheet_name=None)
+    try:
+        # 读取Excel文件的所有sheet
+        sheets = pd.read_excel(file_path, sheet_name=None)
+        markdown_texts = []
 
-    all_text = []
+        # 遍历所有sheet，逐个转换成Markdown
+        for sheet_name, df in sheets.items():
+            markdown_texts.append(f"## Sheet: {sheet_name}\n")
+            markdown_texts.append(df.fillna('').astype(str).to_markdown(index=False))
+            markdown_texts.append("\n")  # 增加换行
 
-    # 遍历所有的sheet
-    for sheet_name, data in df.items():
-        # 将DataFrame转换为字符串形式，并去除NaN值
-        sheet_text = data.fillna('').astype(str).values
+        # 将所有sheet的Markdown文本拼接起来
+        return "\n".join(markdown_texts)
 
-        # 拼接文本，逐行逐列合并
-        for row in sheet_text:
-            all_text.extend(row)
-
-    # 使用空格连接所有单元格文本
-    return ' '.join(all_text)
+    except Exception as e:
+        print("处理Excel文件时发生错误:", str(e))
+        return ""
     
 # 提取图片文件的文本
 def img_text_generation(file_path):
@@ -221,6 +222,6 @@ def process_and_store(file_path):
 
 # 调用示例
 if __name__ == '__main__':
-    file_path = "贵州茅台（600519）.pdf"  # 替换为实际文件路径
+    file_path = "tmp/贵州茅台（600519）.pdf"  # 替换为实际文件路径
     result = process_and_store(file_path)
     print(result)
