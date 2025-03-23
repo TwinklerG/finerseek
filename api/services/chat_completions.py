@@ -132,6 +132,11 @@ def stream_chat_completions(payload: dict):
     # response = requests.request("POST", url, json=payload, headers=headers, stream=True)
     response = rag_qa(payload)
 
+    print("响应内容：")
+    for line in response.iter_lines():
+        if line:
+            print(line.decode("utf-8"))
+
     if response.status_code == 200:
         think = True
         yield "<blockquote>\n"
@@ -168,7 +173,8 @@ if __name__ == '__main__':
         "messages": [
             {"role": "system", "content": "你是一个知识问答助手"},
             {"role": "user", "content": "什么是向量数据库？"}
-        ]
+        ],
+        "model":"deepseek-ai/DeepSeek-R1-Distill-Llama-8B"
     }
 
     # 调用 rag_qa 函数
