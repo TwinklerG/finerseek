@@ -4,7 +4,7 @@ import pdfplumber
 import os
 import pandas as pd
 import gc
-import win32com.client
+# import win32com.client
 import fitz  # PyMuPDF
 import re
 from io import BytesIO
@@ -14,6 +14,12 @@ import os
 from docx import Document as DocxDocument
 from docx.shared import Inches
 from docx.oxml.ns import qn
+
+import os
+from docx import Document
+import zipfile
+from io import BytesIO
+import subprocess
 
 """
 1.有无效表格
@@ -31,58 +37,42 @@ word文档转化为pdf后再提取表格
 # 提取 Word 文档中的图片
 ####################################################################################################
 
-def extract_images_from_docx(filepath, filename):
-    """
-    提取单个 Word 文件中的所有图片并保存
-    :param filepath: 单个 Word 文件的路径
-    :param filename: 单个 Word 文件的文件名
-    :param output_folder: 提取图片的保存路径
-    """
-    # 确保输出目录存在
-    if not os.path.exists(output_folder):
-        os.makedirs(output_folder)
+# def extract_images_from_docx(filepath, filename):
+#     """
+#     提取单个 Word 文件中的所有图片并保存
+#     :param filepath: 单个 Word 文件的路径
+#     :param filename: 单个 Word 文件的文件名
+#     :param output_folder: 提取图片的保存路径
+#     """
+#     # 确保输出目录存在
+#     if not os.path.exists(output_folder):
+#         os.makedirs(output_folder)
 
-    word = None
-    doc = None
-    try:
-        # 启动 Word 应用程序
-        word = win32com.client.Dispatch("Word.Application")
-        word.Visible = False  # 禁止显示 Word 窗口
+#     # 打开 .docx 文件（实际上是一个 zip 压缩包）
+#     try:
+#         # 使用 zipfile 打开 Word 文件（.docx）
+#         with zipfile.ZipFile(filepath, 'r') as docx_zip:
+#             # 获取所有图片文件的路径
+#             image_files = [f for f in docx_zip.namelist() if f.startswith('word/media/')]
 
-        # 打开 Word 文件
-        doc = word.Documents.Open(filepath)
+#             # 遍历所有图片文件
+#             for i, image_file in enumerate(image_files):
+#                 # 提取图片数据
+#                 image_data = docx_zip.read(image_file)
 
-        # 创建一个列表来存储提取的图片数据
-        images = []
+#                 # 确定图片的文件名和路径
+#                 img_ext = image_file.split('.')[-1]  # 获取图片的扩展名
+#                 img_filename = f"{filename}_Image-{i+1}.{img_ext}"
+#                 img_path = os.path.join(output_folder, img_filename)
 
-        # 遍历文档中的所有图片
-        for shape in doc.Shapes:
-            if shape.Type == 12:  # 12 表示 OLE 对象，可能是嵌入的图片
-                try:
-                    picture = shape
-                    image_bytes = picture.OLEFormat.Object.Picture.Data
-                    images.append(image_bytes)
-                except Exception as e:
-                    print(f"Error extracting image: {e}")
+#                 # 保存图片到指定文件夹
+#                 with open(img_path, 'wb') as img_file:
+#                     img_file.write(image_data)
 
-        # 将图片数据保存为图像文件
-        for i, image_data in enumerate(images):
-            file_name = f"{filename}_Image-{i+1}.png"
-            file_path = os.path.join(output_folder, file_name)
-            with open(file_path, 'wb') as image_file:
-                image_file.write(image_data)
+#                 print(f"✅ 图片已保存: {img_path}")
 
-            print(f"✅ 图片已保存: {file_path}")
-
-    except Exception as e:
-        print(f"❌ 发生错误: {e}")
-
-    finally:
-        # 确保文件和 Word 应用程序都关闭
-        if doc:
-            doc.Close()  # 关闭文档
-        if word:
-            word.Quit()  # 退出 Word 应用程序
+#     except Exception as e:
+#         print(f"❌ 发生错误: {e}")
 
 
 ####################################################################################################
@@ -109,6 +99,7 @@ def pdf2image_with_captions(pdf_path, filename):
 
     pdf = fitz.open(pdf_path)  # 打开 PDF 文件
     image_count = 1
+    unique_images = set()  # 用来记录已提取的图片的 xref
 
     for page_number in range(len(pdf)):  # 遍历每一页
         page = pdf[page_number]
@@ -116,10 +107,16 @@ def pdf2image_with_captions(pdf_path, filename):
 
         for img_index, img in enumerate(images):
             xref = img[0]  # 图片 ID
+            
+            # 如果图片已经提取过，跳过
+            if xref in unique_images:
+                continue
+
+            unique_images.add(xref)  # 标记此图片已提取
             base_image = pdf.extract_image(xref)  # 提取图片数据
             img_bytes = base_image["image"]
             img_ext = base_image["ext"]  # 获取图片格式 (jpg, png, etc.)
-            
+
             # 获取图片在 PDF 中的位置
             img_rect = fitz.Rect(img[1], img[2], img[3], img[4])
             caption = get_caption(page, img_rect)  # 提取 caption
@@ -141,23 +138,45 @@ def pdf2image_with_captions(pdf_path, filename):
             image_count += 1
 
 
+
 ####################################################################################################
 # 示例: 将 Word 文档转换为 PDF
 ####################################################################################################
 
-def convert_doc_to_pdf(input_path, output_path):
-    """使用 Microsoft Word 将 .doc / .docx 转换为 PDF"""
-    try:
-        word = win32com.client.Dispatch("Word.Application")
-        word.Visible = False  # 使 Word 运行在后台
+import subprocess
+import os
 
-        doc = word.Documents.Open(input_path)
-        doc.SaveAs(output_path, FileFormat=17)  # 17 表示 PDF 格式
-        doc.Close()
-        word.Quit()
-        print(f"转换成功: {input_path} → {output_path}")
-    except Exception as e:
-        print(f"转换失败: {input_path}, 错误: {e}")
+def convert_doc_to_pdf(input_path, output_path):
+    """
+    将 Word 文档转换为 PDF。
+    :param input_path: 输入的 Word 文档路径。
+    :param output_path: 输出的 PDF 文件路径。
+    """
+    try:
+        # 确保输出路径是一个文件路径
+        if os.path.isdir(output_path):
+            # 如果 output_path 是目录，生成默认文件名
+            output_filename = os.path.splitext(os.path.basename(input_path))[0] + ".pdf"
+            output_path = os.path.join(output_path, output_filename)
+
+        # 调用 LibreOffice 进行转换
+        subprocess.run([
+            '/usr/bin/libreoffice',  # LibreOffice 的可执行文件路径
+            '--headless',  # 无界面模式
+            '--convert-to', 'pdf',  # 转换为 PDF
+            input_path,  # 输入的 Word 文档路径
+            '--outdir', os.path.dirname(output_path)  # 输出的 PDF 文件目录
+        ], check=True)
+
+        # 检查是否生成 PDF 文件
+        if os.path.exists(output_path):
+            print(f"转换成功: {input_path} -> {output_path}")
+        else:
+            print(f"转换失败: 未生成 PDF 文件")
+    except subprocess.CalledProcessError as e:
+        print(f"转换失败: {e}")
+    except FileNotFoundError:
+        print("未找到 LibreOffice，请确保已安装并正确配置路径。")
 
 # 示例: 处理整个文件夹
 def batch_convert_word_to_pdf(input_folder, output_folder):
@@ -255,10 +274,10 @@ def extract_tables(pdf_path):
 # 示例: 处理文件夹中的所有 Word 和 PDF 文件
 ####################################################################################################
     
-def process_docx(docx_path,filename):
-    """ 处理 Word 文件 """
-    # 提取图片
-    extract_images_from_docx(docx_path, filename)
+# def process_docx(docx_path,filename):
+#     """ 处理 Word 文件 """
+#     # 提取图片
+#     extract_images_from_docx(docx_path, filename)
     
 def process_pdf(file_path,filename):
     """ 处理 PDF 文件 """
@@ -286,7 +305,7 @@ def process_pdf(file_path,filename):
         
     # 将提取的文字保存到 text.txt
     output_file = os.path.join(output_folder, "text.txt")
-    with open(output_file, "w", encoding="utf-8") as f:
+    with open(output_file, "a", encoding="utf-8") as f:
         f.write(all_text)
     print(f"All text saved to {output_file}")
     
@@ -297,17 +316,17 @@ def process_folder(input_folder,output_folde):
         file_path = os.path.join(input_folder, filename)
 
         if os.path.isfile(file_path):  # 只处理文件
-            if filename.lower().endswith((".doc", ".docx")):
-                process_docx(file_path,filename)  # 处理 Word 文件
-            elif filename.lower().endswith(".pdf"):
+            # if filename.lower().endswith((".doc", ".docx")):
+            #     process_docx(file_path,filename)  # 处理 Word 文件
+            if filename.lower().endswith(".pdf"):
                 process_pdf(file_path,filename)  # 处理 PDF 文件
             else:
                 print(f"⚠️ 忽略文件: {filename}")  # 非 docx/pdf 文件
     
 
 # 示例
-pdf_folder = 'D:/codes/finerseek2025/TestPdf'  # 输入文件夹路径
-output_folder = 'D:/codes/finerseek2025/tables'  # 输出文件夹路径
+pdf_folder = '/mnt/d/codes/finerseek2025/TestPdf'  # 输入文件夹路径
+output_folder = '/mnt/d/codes/finerseek2025/tables'  # 输出文件夹路径
 
 batch_convert_word_to_pdf(pdf_folder, pdf_folder)
 #处理文件夹中的所有 PDF 文件
