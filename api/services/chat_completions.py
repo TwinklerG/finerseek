@@ -1,5 +1,6 @@
 import os, requests, json
 from pymilvus import MilvusClient
+
 # from sentence_transformers import SentenceTransformer
 from pymilvus.model.hybrid import BGEM3EmbeddingFunction
 from pymilvus import AnnSearchRequest, WeightedRanker
@@ -14,6 +15,7 @@ headers = {
     "Content-Type": "application/json",
 }
 
+
 def dense_search(col, query_dense_embedding, limit=10):
     search_params = {"metric_type": "IP", "params": {}}
     res = col.search(
@@ -24,6 +26,7 @@ def dense_search(col, query_dense_embedding, limit=10):
         param=search_params,
     )[0]
     return [hit.get("text") for hit in res]
+
 
 def sparse_search(col, query_sparse_embedding, limit=10):
     search_params = {
@@ -38,6 +41,7 @@ def sparse_search(col, query_sparse_embedding, limit=10):
         param=search_params,
     )[0]
     return [hit.get("text") for hit in res]
+
 
 def hybrid_search(
     col,
@@ -76,6 +80,7 @@ def hybrid_search(
     )[0]
     return [hit.get("text") for hit in res]
 
+
 # RAG函数：检索Milvus数据库并结合大模型生成回复
 def rag_qa(payload, top_k=3):
     query = payload["messages"][-1]["content"]
@@ -89,9 +94,9 @@ def rag_qa(payload, top_k=3):
 
     # 编码用户的问题
     bge_m3_ef = BGEM3EmbeddingFunction(
-        model_name='BAAI/bge-m3', # Specify the model name
-        device='cpu', # Specify the device to use, e.g., 'cpu' or 'cuda:0'
-        use_fp16=False # Specify whether to use fp16. Set to `False` if `device` is `cpu`.
+        model_name="BAAI/bge-m3",  # Specify the model name
+        device="cpu",  # Specify the device to use, e.g., 'cpu' or 'cuda:0'
+        use_fp16=False,  # Specify whether to use fp16. Set to `False` if `device` is `cpu`.
     )
 
     query_embeddings = bge_m3_ef.encode_queries([query])
@@ -113,16 +118,18 @@ def rag_qa(payload, top_k=3):
 
     # 确保 dense_results、sparse_results 和 hybrid_results 的元素都是字符串类型
     all_results = list(map(str, dense_results + sparse_results + hybrid_results))
-    
+
     # 测试检索功能
     # print(all_results)
 
     # 将结果拼接为上下文字符串
     context = "\n---\n".join(all_results)
-    
+
     # 修改 payload 中的用户问题，结合上下文构建 prompt
-    payload["messages"][-1]["content"] = f"根据以下内容回答问题:\n{context}\n\n问题：{query}\n回答："
-    
+    payload["messages"][-1][
+        "content"
+    ] = f"根据以下内容回答问题:\n{context}\n\n问题：{query}\n回答："
+
     # 调用原有的API接口生成回复
     response = requests.request("POST", url, json=payload, headers=headers, stream=True)
     return response
@@ -132,10 +139,10 @@ def stream_chat_completions(payload: dict):
     # response = requests.request("POST", url, json=payload, headers=headers, stream=True)
     response = rag_qa(payload)
 
-    print("响应内容：")
-    for line in response.iter_lines():
-        if line:
-            print(line.decode("utf-8"))
+    # print("响应内容：")
+    # for line in response.iter_lines():
+    #     if line:
+    #         print(line.decode("utf-8"))
 
     if response.status_code == 200:
         think = True
@@ -148,13 +155,11 @@ def stream_chat_completions(payload: dict):
                 delta = data["choices"][0]["delta"]
                 # print(delta)
                 if delta["reasoning_content"] != None:
-                    # print(delta["reasoning_content"], end="")
                     yield delta["reasoning_content"]
                 else:
                     if think:
                         yield "</blockquote>"
                         think = False
-                    # print(delta["content"])
                     yield delta["content"]
                 # print(delta)
             except Exception:
@@ -167,14 +172,14 @@ def stream_chat_completions(payload: dict):
 
 
 # 调用示例
-if __name__ == '__main__':
+if __name__ == "__main__":
     # 模拟一个聊天 payload
     payload = {
         "messages": [
             {"role": "system", "content": "你是一个知识问答助手"},
-            {"role": "user", "content": "什么是向量数据库？"}
+            {"role": "user", "content": "什么是向量数据库？"},
         ],
-        "model":"deepseek-ai/DeepSeek-R1-Distill-Llama-8B"
+        "model": "deepseek-ai/DeepSeek-R1-Distill-Llama-8B",
     }
 
     # 调用 rag_qa 函数
