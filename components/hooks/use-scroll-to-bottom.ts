@@ -1,5 +1,13 @@
 import { type RefObject, useEffect, useRef } from "react";
 
+function debounce(func: (...args: unknown[]) => void, delay: number) {
+  let timeoutId: ReturnType<typeof setTimeout>;
+  return (...args: unknown[]) => {
+    clearTimeout(timeoutId);
+    timeoutId = setTimeout(() => func(...args), delay);
+  };
+}
+
 export default function useScrollToBottom<T extends HTMLElement>(): [
   RefObject<T>,
   RefObject<T>
@@ -12,8 +20,12 @@ export default function useScrollToBottom<T extends HTMLElement>(): [
     const end = endRef.current;
 
     if (container && end) {
-      const observer = new MutationObserver(() => {
+      const debouncedScrollIntoView = debounce(() => {
         end.scrollIntoView({ behavior: "smooth", block: "end" });
+      }, 200); // Adjust the delay as needed
+
+      const observer = new MutationObserver(() => {
+        debouncedScrollIntoView();
       });
 
       observer.observe(container, {
@@ -23,7 +35,9 @@ export default function useScrollToBottom<T extends HTMLElement>(): [
         characterData: true,
       });
 
-      return () => observer.disconnect();
+      return () => {
+        observer.disconnect();
+      };
     }
   }, []);
 
