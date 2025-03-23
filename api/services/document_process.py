@@ -45,8 +45,8 @@ def pdf_text_generation(file_path):
         return None
 
     # 新增
-    batch_convert_word_to_pdf(pdf_folder, pdf_folder) #处理文件夹中的所有 PDF 文件
-    process_folder(pdf_folder,pdf_folder,output_folder, output_folder) # 处理文件夹中的所有 Word 和 PDF 文件
+    batch_convert_word_to_pdf(input_folder, input_folder) #处理文件夹中的所有 PDF 文件
+    process_folder(input_folder,input_folder,output_folder, output_folder) # 处理文件夹中的所有 Word 和 PDF 文件
 
     # 读取 text.txt 文件内容
     text_file_path = os.path.join(output_folder, "text.txt")
@@ -221,6 +221,6 @@ def process_and_store(file_path):
 
 # 调用示例
 if __name__ == '__main__':
-    file_path = "tmp/贵州茅台（600519）.pdf"  # 替换为实际文件路径
+    file_path = "tmp/维信诺.docx"  # 替换为实际文件路径
     result = process_and_store(file_path)
     print(result)

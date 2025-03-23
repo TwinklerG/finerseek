@@ -124,7 +124,7 @@ def pdf2image_with_captions(pdf_path, filename,output_folder):
             # 生成文件名
             if caption:
                 safe_caption = re.sub(r'[\/:*?"<>|]', '_', caption[:20])  # 清理非法字符
-                img_filename = f"{filename}{safe_caption}.{img_ext}"
+                img_filename = f"{filename}{safe_caption}-{image_count+1}.{img_ext}"
             else:
                 img_filename = f"{filename}_Image-{image_count+1}.png"
 
