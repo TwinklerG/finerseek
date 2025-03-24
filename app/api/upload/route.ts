@@ -14,7 +14,7 @@ export const POST = async (request: Request) => {
     const buffer = Buffer.from(bytes);
     const filePath = path.join(
       process.cwd(),
-      "public/uploads",
+      "tmp",
       (file as File).name
     );
     await mkdir(path.dirname(filePath), { recursive: true });
