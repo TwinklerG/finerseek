@@ -1,5 +1,6 @@
 from fastapi import FastAPI, UploadFile
 from fastapi.responses import StreamingResponse
+from fastapi.middleware.cors import CORSMiddleware
 import uvicorn
 
 from api.services.chat_completions import stream_chat_completions
@@ -8,6 +9,13 @@ from api.services.document_process import process_and_store
 ### Create FastAPI instance with custom docs and openapi url
 app = FastAPI(docs_url="/api/py/docs", openapi_url="/api/py/openapi.json")
 
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 @app.get("/api/py/hello")
 def hello_fast_api():

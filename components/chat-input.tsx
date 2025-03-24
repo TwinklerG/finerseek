@@ -37,7 +37,7 @@ export function ChatInput({
       body: `{"stream":true,"messages":${JSON.stringify([
         ...messages,
         { role: "user", content: inputContent },
-      ])},"model":"deepseek-ai/DeepSeek-R1-Distill-Llama-8B"}`,
+      ])},"model":"Qwen/Qwen2.5-72B-Instruct"}`,
     };
 
     fetch("/api/py/chat/completions", options).then((response) => {

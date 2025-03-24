@@ -22,6 +22,24 @@ from pymilvus import (
 from api.services.extract_ultils import *
 import shutil
 
+from PIL import Image
+import io
+import base64
+from openai import OpenAI
+
+def convert_image_to_webp_base64(input_image_path):
+    try:
+        with Image.open(input_image_path) as img:
+            byte_arr = io.BytesIO()
+            img.save(byte_arr, format='webp')
+            byte_arr = byte_arr.getvalue()
+            base64_str = base64.b64encode(byte_arr).decode('utf-8')
+            return base64_str
+    except IOError:
+        print(f"Error: Unable to open or convert the image {input_image_path}")
+        return None
+
+
 # 提取 PDF 文件的文本
 def pdf_text_generation(file_path):
     # 提取文件名
@@ -122,7 +140,35 @@ def excel_text_generation(file_path):
 # 提取图片文件的文本
 def img_text_generation(file_path):
     # 使用大模型生成caption（输出详细而复杂的信息）
-    return "Image caption"
+    input_image_path = file_path
+    base64_image=convert_image_to_webp_base64(input_image_path)
+    payload_tmp = {
+        "role": "user",
+        "content":[
+            {
+                "type": "image_url",
+                "image_url": {
+                    "url": f"data:image/jpeg;base64,{base64_image}",
+                    "detail":"low"
+                }
+            },
+            {
+                "type": "text",
+                "text": "你是一个金融专家，根据上传的图片，来生成图片的描述，请给出图片的概括总结+详细描述。"
+            }
+        ]
+    }
+    client = OpenAI(
+        api_key=os.environ.get("API_KEY"), # 从https://cloud.siliconflow.cn/account/ak获取
+        base_url="https://api.siliconflow.cn/v1"
+    )
+    response = client.chat.completions.create(
+        model="Qwen/Qwen2-VL-72B-Instruct",
+        messages=payload_tmp,
+        stream=False
+    )
+    caption = response.choices[0].message.content
+    return caption
 
 # 分块文本函数
 def split_text(text, chunk_size=300, overlap=50):
@@ -221,6 +267,6 @@ def process_and_store(file_path):
 
 # 调用示例
 if __name__ == '__main__':
-    file_path = "tmp/维信诺.docx"  # 替换为实际文件路径
+    file_path = "资产负债表(1).xlsx"  # 替换为实际文件路径
     result = process_and_store(file_path)
     print(result)

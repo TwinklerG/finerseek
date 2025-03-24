@@ -46,6 +46,7 @@ export function Artifacts() {
                         method: "POST",
                         body: formData
                     }).then(res => {
+                        alert("文档上传编码 成功")
                         console.log(res);
                     }).catch(err => {
                         console.log(err)
