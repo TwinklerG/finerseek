@@ -34,7 +34,15 @@ export function Artifacts() {
                     }
                     const formData = new FormData();
                     formData.append("file", files[0]);
-                    fetch("http://localhost:3000/api/upload", {
+                    // fetch("http://localhost:3000/api/upload", {
+                    //     method: "POST",
+                    //     body: formData
+                    // }).then(res => {
+                    //     console.log(res);
+                    // }).catch(err => {
+                    //     console.log(err)
+                    // })
+                    fetch("http://localhost:3000/api/py/chat/upload", {
                         method: "POST",
                         body: formData
                     }).then(res => {
